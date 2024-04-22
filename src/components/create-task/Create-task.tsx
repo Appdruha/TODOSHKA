@@ -10,11 +10,22 @@ import { createTask } from '../../store/slices/tasks-slice.ts'
 
 type Inputs = Omit<Task, 'id'>
 
-export const CreateTask = () => {
+interface CreateTaskProps {
+  parentTaskId: string | null
+  name?: string
+  description?: string
+  date?: string
+}
+
+export const CreateTask = ({ parentTaskId, name, description, date }: CreateTaskProps) => {
   const dispatch = useAppDispatch()
 
   const formMethods = useForm<Inputs>({
-    mode: 'onBlur',
+    mode: 'onBlur', defaultValues: {
+      name,
+      date,
+      description,
+    },
   })
 
   const { handleSubmit } = formMethods
@@ -22,8 +33,7 @@ export const CreateTask = () => {
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const taskData = data as Task
     taskData.id = v4()
-    console.log(taskData)
-    dispatch(createTask({ parentTaskId: null, task: taskData }))
+    dispatch(createTask({ parentTaskId, task: taskData }))
   }
 
   return (

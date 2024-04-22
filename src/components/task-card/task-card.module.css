@@ -1,0 +1,32 @@
+.cardContainer {
+    position: relative;
+    margin-top: 16px;
+    width: 100%;
+    border: 1px solid #5858b4;
+    border-radius: 16px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.cardHeading {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.descriptionContainer {
+    margin: 12px 0 12px 0;
+}
+
+.ready {
+    color: green;
+}
+
+.notReady {
+    color: red;
+}
+
+.completeBtn {
+    right: 12px;
+    bottom: 12px;
+}

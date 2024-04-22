@@ -1,0 +1,17 @@
+.container {
+    padding: 16px;
+    width: 100%;
+}
+
+.heading {
+    width: fit-content;
+    margin: auto;
+}
+
+.dataContainer {
+    margin-top: 16px;
+}
+
+.dataContainer > p {
+    font-size: 16px;
+}
