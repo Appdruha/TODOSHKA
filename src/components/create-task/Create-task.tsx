@@ -6,7 +6,7 @@ import { Button } from '@mui/material'
 import { v4 } from 'uuid'
 import styles from './create-task.module.css'
 import { useAppDispatch } from '../../hooks/redux-hooks.ts'
-import { createTask } from '../../store/slices/tasks-slice.ts'
+import { createTask, editTask } from '../../store/slices/tasks-slice.ts'
 
 type Inputs = Omit<Task, 'id'>
 
@@ -15,15 +15,16 @@ interface CreateTaskProps {
   name?: string
   description?: string
   date?: string
+  taskToEditId?: string
 }
 
-export const CreateTask = ({ parentTaskId, name, description, date }: CreateTaskProps) => {
+export const CreateTask = ({ parentTaskId, name, description, date, taskToEditId }: CreateTaskProps) => {
   const dispatch = useAppDispatch()
 
   const formMethods = useForm<Inputs>({
     mode: 'onBlur', defaultValues: {
       name,
-      date,
+      date: date || new Date().toDateString(),
       description,
     },
   })
@@ -32,8 +33,12 @@ export const CreateTask = ({ parentTaskId, name, description, date }: CreateTask
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     const taskData = data as Task
-    taskData.id = v4()
-    dispatch(createTask({ parentTaskId, task: taskData }))
+    if (taskToEditId) {
+      dispatch(editTask({taskId: taskToEditId, newData: taskData}))
+    } else {
+      taskData.id = v4()
+      dispatch(createTask({ parentTaskId, task: taskData }))
+    }
   }
 
   return (
@@ -42,7 +47,7 @@ export const CreateTask = ({ parentTaskId, name, description, date }: CreateTask
         <ControlledTextField name='name' label='Название' />
         <ControlledTextField name='description' label='Описание задачи' multiline={true} />
         <ControlledDateTimePicker name='date' label='Дата' />
-        <Button type='submit'>Создать</Button>
+        <Button type='submit'>{taskToEditId ? 'Редактировать' : 'Создать'}</Button>
       </form>
     </FormProvider>
   )

@@ -9,12 +9,12 @@ interface TaskProps extends Task {
   parentTaskId: string | null
 }
 
-export const TaskCard = ({ name, date, description, isCompleted, id }: TaskProps) => {
+export const TaskCard = ({ name, date, description, isCompleted, id, parentTaskId }: TaskProps) => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
 
   const handleCardClick = (taskId: string) => {
-    navigate(`/${taskId}`)
+    navigate(`/${taskId}`, {state: {parentTaskId}})
   }
 
   const handleCompleteBtn = (event: React.MouseEvent<HTMLButtonElement>) => {

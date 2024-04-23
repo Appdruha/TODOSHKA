@@ -2,6 +2,7 @@ import { Task } from '../../types/Task.ts'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '../store.ts'
 import { findTaskById } from '../../utils/helpers/find-task.ts'
+import { saveState } from '../../utils/helpers/save-state.ts'
 
 interface InitialState {
   tasks: Task[] | null
@@ -24,6 +25,15 @@ export const tasksSlice = createSlice({
   name: 'tasksSlice',
   initialState,
   reducers: {
+    getSavedTasks: (state) => {
+      const tasksString = localStorage.getItem('tasks')
+      if (tasksString) {
+        const tasks: Task[] = JSON.parse(tasksString)
+        if (tasks.length) {
+          state.tasks = tasks
+        }
+      }
+    },
     deleteTask: (state, action: PayloadAction<{ taskId: string, parentTaskId: string | null }>) => {
       if (!state.tasks) {
         throw new Error('no tasks')
@@ -36,6 +46,14 @@ export const tasksSlice = createSlice({
           task.childTasks = task.childTasks!.filter(childTask => childTask.id !== action.payload.taskId)
         }
       }
+      saveState({ tasksReducer: state })
+    },
+    editTask: (state, action: PayloadAction<{ taskId: string, newData: Task }>) => {
+      const task = findTaskById({ tasksReducer: state }, action.payload.taskId)
+      if (task) {
+        Object.assign(task, action.payload.newData)
+      }
+      saveState({ tasksReducer: state })
     },
     completeTask: (state, action: PayloadAction<string>) => {
       const task = findTaskById({ tasksReducer: state }, action.payload)
@@ -55,6 +73,7 @@ export const tasksSlice = createSlice({
           completeChildTasks(task.childTasks)
         }
       }
+      saveState({ tasksReducer: state })
     },
     createTask: (state, action: PayloadAction<{ parentTaskId: string | null, task: Task }>) => {
       const { task, parentTaskId } = action.payload
@@ -85,11 +104,12 @@ export const tasksSlice = createSlice({
 
         insertTask(state.tasks, parentTaskId, task)
       }
+      saveState({ tasksReducer: state })
     },
   },
 })
 
-export const { createTask, completeTask, deleteTask } = tasksSlice.actions
+export const { getSavedTasks, createTask, editTask, completeTask, deleteTask } = tasksSlice.actions
 export const selectTaskById = (state: RootState, taskId: string | undefined): null | Task => {
   if (!taskId) {
     return null

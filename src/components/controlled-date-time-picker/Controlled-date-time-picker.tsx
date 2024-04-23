@@ -16,14 +16,14 @@ export const ControlledDateTimePicker = (
       name={name}
       rules={rules}
       control={control}
-      render={({ field: { value = null, onChange }, fieldState: { error } }) => (
+      render={({ field: { value = new Date(), onChange }, fieldState: { error } }) => (
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DateTimePicker
             label={label}
             value={dayjs(value)}
             onChange={(newValue) => onChange(dayjs(newValue).format('MM/DD/YYYY hh:mm a'))}
           />
-          <p>{error?.message}</p>
+          <p style={{color: 'red'}}>{error?.message}</p>
         </LocalizationProvider>
       )}
     />

@@ -9,12 +9,10 @@ import { Task } from '../../types/Task.ts'
 interface MappedTaskCardsProps {
   tasks: Task[] | null
   parentTaskId: string | null
-  name?: string
-  description?: string
-  date?: string
+  isCompleted?: boolean
 }
 
-export const MappedTaskCards = ({ tasks, parentTaskId, name, description, date }: MappedTaskCardsProps) => {
+export const MappedTaskCards = ({ tasks, parentTaskId, isCompleted = false }: MappedTaskCardsProps) => {
   const dispatch = useAppDispatch()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -48,13 +46,14 @@ export const MappedTaskCards = ({ tasks, parentTaskId, name, description, date }
         </Fragment>,
       )
       }
-      <ButtonGroup variant='text' sx={{ margin: '16px auto', display: 'flex', width: 'fit-content' }}>
+      {!isCompleted && <ButtonGroup variant='text' sx={{ margin: '16px auto', display: 'flex', width: 'fit-content' }}>
         <Button onClick={() => setIsModalOpen(true)}>Создать задачу</Button>
-        <Button onClick={() => handleDeleteBtnClick()}>{isDeleting ? 'Удалить выбранное' : 'Удалить задачи'}</Button>
-      </ButtonGroup>
+        {tasks && tasks.length &&
+          <Button onClick={() => handleDeleteBtnClick()}>{isDeleting ? 'Удалить выбранное' : 'Удалить задачи'}</Button>}
+      </ButtonGroup>}
       <Modal open={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <>
-          <CreateTask parentTaskId={parentTaskId} name={name} description={description} date={date} />
+          <CreateTask parentTaskId={parentTaskId} />
         </>
       </Modal>
     </>
